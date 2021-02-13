@@ -1,0 +1,10 @@
+name: routine-assembly
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3
+  - shovill=1.1.0
+  - prokka=1.14.5
+  - quast=5.0.2
