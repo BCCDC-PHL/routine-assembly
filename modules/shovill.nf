@@ -2,25 +2,21 @@ process shovill {
 
     tag { sample_id }
 
-    publishDir "${params.outdir}/${task.process.replaceAll(":","_")}", pattern: "${sample_id}_assembly", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}*.{fa,log}", mode: 'copy'
 
     cpus 8
 
     input:
-      tuple val(grouping_key), path(reads)
+      tuple val(sample_id), path(reads_1), path(reads_2)
 
     output:
-      tuple val(sample_id), path("${sample_id}_assembly")
+      tuple val(sample_id), path("${sample_id}.fa"), emit: assembly
+      tuple val(sample_id), path("${sample_id}_shovill.log"), emit: log
 
     script:
-      if (grouping_key =~ '_S[0-9]+_') {
-        sample_id = grouping_key.split("_S[0-9]+_")[0]
-      } else if (grouping_key =~ '_') {
-        sample_id = grouping_key.split("_")[0]
-      } else {
-        sample_id = grouping_key
-      }
       """
-      shovill --cpus 8 --outdir ${sample_id}_assembly --R1 ${reads[0]} --R2 ${reads[1]}
+      shovill --cpus ${task.cpus} --trim --namefmt \"${sample_id}_contig%0d\" --outdir ${sample_id}_assembly --R1 ${reads_1} --R2 ${reads_2}
+      cp ${sample_id}_assembly/contigs.fa ${sample_id}.fa
+      cp ${sample_id}_assembly/shovill.log ${sample_id}_shovill.log
       """
 }
