@@ -4,17 +4,22 @@ nextflow.enable.dsl = 2
 
 include { shovill } from './modules/shovill.nf'
 include { prokka } from './modules/prokka.nf'
-// include { quast } from './modules/quast.nf'
+include { bakta } from './modules/bakta.nf'
+include { quast } from './modules/quast.nf'
+include { parse_quast_report } from './modules/quast.nf'
 
 
 workflow {
-  ch_fastq = Channel.fromFilePairs( "${params.run_dir}/Data/Intensities/BaseCalls/*_{R1,R2}_*.fastq.gz" )
-  ch_run_dir = Channel.fromPath(params.run_dir)
-  ch_run_id = Channel.fromPath(params.run_dir).map{ it -> it.baseName }
-  
-  
+  ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it[1], it[2]] }.unique{ it -> it[0] }
+  run_prokka = params.bakta ? false : true
+  run_bakta = run_prokka ? false : true
   main:
     shovill(ch_fastq)
-    prokka(shovill.out)
-
+    if (run_prokka) {
+      prokka(shovill.out.assembly)
+    } else if (run_bakta) {
+      bakta(shovill.out.assembly)
+    }
+    quast(shovill.out.assembly)
+    parse_quast_report(quast.out)
 }
