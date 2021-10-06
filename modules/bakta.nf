@@ -8,8 +8,8 @@ process bakta {
       tuple val(sample_id), path(assembly)
 
     output:
-      tuple val(sample_id), path("${sample_id}.gbk"), emit: genbank
-      tuple val(sample_id), path("${sample_id}.gff"), emit: gff
+      tuple val(sample_id), path("${sample_id}_bakta.gbk"), emit: genbank
+      tuple val(sample_id), path("${sample_id}_bakta.gff"), emit: gff
       tuple val(sample_id), path("${sample_id}_bakta.json"), emit: json
       tuple val(sample_id), path("${sample_id}_bakta.log"), emit: log
 

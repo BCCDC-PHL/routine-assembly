@@ -1,0 +1,9 @@
+name: routine-assembly-unicycler
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - unicycler=0.4.8
+  - spades=3.13.0
+  - samtools=1.13
