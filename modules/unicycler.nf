@@ -15,7 +15,7 @@ process unicycler {
     script:
       """
       unicycler --threads ${task.cpus} -1 ${reads_1} -2 ${reads_2} -o ${sample_id}_assembly
-      sed 's/^>/>${sample_id}/' ${sample_id}_assembly/assembly.fasta > ${sample_id}.fa
+      sed 's/^>/>${sample_id}_/' ${sample_id}_assembly/assembly.fasta > ${sample_id}.fa
       cp ${sample_id}_assembly/assembly.gfa ${sample_id}.gfa
       cp ${sample_id}_assembly/unicycler.log ${sample_id}_unicycler.log
       """
