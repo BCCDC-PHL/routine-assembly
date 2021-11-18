@@ -12,23 +12,35 @@ A generic pipeline for creating routine draft assemblies
 
 By default, shovill and prokka will be used:
 ```
-nextflow run BCCDC-PHL/routine-assembly-nf --fastq_input <fastq input directory> --outdir <output directory>
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --fastq_input <fastq input directory> \
+  --outdir <output directory>
 ```
 
 Unicycler and/or bakta can be used with the `--unicycler` and `--bakta` flags:
 ```
-nextflow run BCCDC-PHL/routine-assembly-nf --fastq_input <fastq input directory> --unicycler --bakta --outdir <output directory>
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --fastq_input <fastq input directory> \
+  --unicycler \
+  --bakta \
+  --outdir <output directory>
 ```
 
 Any combination of shovill/unicycler and prokka/bakta is supported:
 Shovill with bakta:
 ```
-nextflow run BCCDC-PHL/routine-assembly-nf --fastq_input <fastq input directory> --bakta --outdir <output directory>
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --fastq_input <fastq input directory> \
+  --bakta \
+  --outdir <output directory>
 ```
 
 Unicycler with prokka:
 ```
-nextflow run BCCDC-PHL/routine-assembly-nf --fastq_input <fastq input directory> --unicycler --outdir <output directory>
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --fastq_input <fastq input directory> \
+  --unicycler \
+  --outdir <output directory>
 ```
 
 ## Output
