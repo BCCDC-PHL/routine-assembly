@@ -2,9 +2,7 @@ process prokka {
 
     tag { sample_id }
 
-    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}.{gbk,gff}", mode: 'copy'
-
-    cpus 8
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_prokka.{gbk,gff}", mode: 'copy'
 
     input:
       tuple val(sample_id), path(assembly)
@@ -15,7 +13,7 @@ process prokka {
     script:
       """
       prokka --cpus ${task.cpus} --compliant --locustag ${sample_id} --centre "BCCDC-PHL" --prefix "${sample_id}" ${assembly}
-      cp ${sample_id}/${sample_id}.gbk .
-      cp ${sample_id}/${sample_id}.gff .
+      cp ${sample_id}/${sample_id}.gbk ${sample_id}_prokka.gbk
+      cp ${sample_id}/${sample_id}.gff ${sample_id}_prokka.gff
       """
 }

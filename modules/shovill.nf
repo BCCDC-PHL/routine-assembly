@@ -2,7 +2,7 @@ process shovill {
 
     tag { sample_id }
 
-    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}*.{fa,log}", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_shovill.{fa,log}", mode: 'copy'
 
     cpus 8
 
@@ -16,7 +16,7 @@ process shovill {
     script:
       """
       shovill --cpus ${task.cpus} --trim --namefmt \"${sample_id}_contig%0d\" --outdir ${sample_id}_assembly --R1 ${reads_1} --R2 ${reads_2}
-      cp ${sample_id}_assembly/contigs.fa ${sample_id}.fa
+      cp ${sample_id}_assembly/contigs.fa ${sample_id}_shovill.fa
       cp ${sample_id}_assembly/shovill.log ${sample_id}_shovill.log
       """
 }
