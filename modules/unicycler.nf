@@ -8,8 +8,8 @@ process unicycler {
       tuple val(sample_id), path(reads_1), path(reads_2)
 
     output:
-      tuple val(sample_id), path("${sample_id}.fa"), emit: assembly
-      tuple val(sample_id), path("${sample_id}.gfa"), emit: assembly_graph
+      tuple val(sample_id), path("${sample_id}_unicycler.fa"), emit: assembly
+      tuple val(sample_id), path("${sample_id}_unicycler.gfa"), emit: assembly_graph
       tuple val(sample_id), path("${sample_id}_unicycler.log"), emit: log
 
     script:

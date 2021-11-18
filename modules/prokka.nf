@@ -8,7 +8,7 @@ process prokka {
       tuple val(sample_id), path(assembly)
 
     output:
-      tuple val(sample_id), path("${sample_id}.gbk"), path("${sample_id}.gff")
+      tuple val(sample_id), path("${sample_id}_prokka.gbk"), path("${sample_id}_prokka.gff")
 
     script:
       """
