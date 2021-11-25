@@ -2,6 +2,7 @@
 
 nextflow.enable.dsl = 2
 
+include { hash_files } from './modules/hash_files.nf'
 include { fastp } from './modules/fastp.nf'
 include { fastp_json_to_csv } from './modules/fastp.nf'
 include { shovill } from './modules/shovill.nf'
@@ -14,7 +15,7 @@ include { parse_quast_report } from './modules/quast.nf'
 
 workflow {
   if (params.samplesheet_input != 'NO_FILE') {
-    ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true)
+    ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], it['R1'], it['R2']] }
   } else {
     ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it[1], it[2]] }.unique{ it -> it[0] }
   }
@@ -24,6 +25,7 @@ workflow {
   run_bakta = run_prokka ? false : true
 
   main:
+    hash_files(ch_fastq.map{ it -> [it[0], [it[1], it[2]]] }.combine(Channel.of("fastq-input")).view())
     fastp(ch_fastq)
     fastp_json_to_csv(fastp.out.json)
     if (run_shovill) {
