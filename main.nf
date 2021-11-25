@@ -13,11 +13,16 @@ include { parse_quast_report } from './modules/quast.nf'
 
 
 workflow {
-  ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it[1], it[2]] }.unique{ it -> it[0] }
+  if (params.samplesheet_input != 'NO_FILE') {
+    ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true)
+  } else {
+    ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it[1], it[2]] }.unique{ it -> it[0] }
+  }
   run_shovill = params.unicycler ? false : true
   run_unicycler = run_shovill ? false : true
   run_prokka = params.bakta ? false : true
   run_bakta = run_prokka ? false : true
+
   main:
     fastp(ch_fastq)
     fastp_json_to_csv(fastp.out.json)
