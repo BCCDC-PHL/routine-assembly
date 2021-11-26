@@ -43,6 +43,13 @@ nextflow run BCCDC-PHL/routine-assembly-nf \
   --outdir <output directory>
 ```
 
+The pipeline also supports a 'samplesheet input' mode. Pass a `samplesheet.csv` file with the headers `ID`, `R1`, `R2`:
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --samplesheet_input <samplesheet.csv> \
+  --outdir <output directory>
+```
+
+
 ## Output
 An output directory will be created for each sample under the directory provided with the `--outdir` flag. The directory will be named by sample ID, inferred from
 the fastq files (all characters before the first underscore in the fastq filenames).
