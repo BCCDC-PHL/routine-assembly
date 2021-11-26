@@ -11,6 +11,10 @@ def main(args):
     total_reads_after_filtering = fastp_report['summary']['after_filtering']['total_reads']
     total_bases_before_filtering = fastp_report['summary']['before_filtering']['total_bases']
     total_bases_after_filtering = fastp_report['summary']['after_filtering']['total_bases']
+    read1_mean_length_before_filtering = fastp_report['summary']['before_filtering']['read1_mean_length']
+    read2_mean_length_before_filtering = fastp_report['summary']['before_filtering']['read2_mean_length']
+    read1_mean_length_after_filtering = fastp_report['summary']['after_filtering']['read1_mean_length']
+    read2_mean_length_after_filtering = fastp_report['summary']['after_filtering']['read2_mean_length']
     q20_bases_before_filtering = fastp_report['summary']['before_filtering']['q20_bases']
     q20_bases_after_filtering = fastp_report['summary']['after_filtering']['q20_bases']
     q20_rate_before_filtering = fastp_report['summary']['before_filtering']['q20_rate']
@@ -30,6 +34,10 @@ def main(args):
         'total_reads_after_filtering',
         'total_bases_before_filtering',
         'total_bases_after_filtering',
+        'read1_mean_length_before_filtering',
+        'read1_mean_length_after_filtering',
+        'read2_mean_length_before_filtering',
+        'read2_mean_length_after_filtering',
         'q20_bases_before_filtering',
         'q20_bases_after_filtering',
         'q20_rate_before_filtering',
@@ -55,6 +63,10 @@ def main(args):
         total_reads_after_filtering,
         total_bases_before_filtering,
         total_bases_after_filtering,
+        read1_mean_length_before_filtering,
+        read1_mean_length_after_filtering,
+        read2_mean_length_before_filtering,
+        read2_mean_length_after_filtering,
         q20_bases_before_filtering,
         q20_bases_after_filtering,
         q20_rate_before_filtering,
