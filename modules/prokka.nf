@@ -8,10 +8,13 @@ process prokka {
       tuple val(sample_id), path(assembly)
 
     output:
-      tuple val(sample_id), path("${sample_id}_prokka.gbk"), path("${sample_id}_prokka.gff")
+      tuple val(sample_id), path("${sample_id}_prokka.gbk"), emit: gbk
+      tuple val(sample_id), path("${sample_id}_prokka.gff"), emit: gff
+      tuple val(sample_id), path("${sample_id}_prokka_provenance.yml"), emit: provenance
 
     script:
       """
+      printf -- "- tool_name: prokka\\n  tool_version: \$(prokka --version 2>&1 | cut -d ' ' -f 2)\\n" > ${sample_id}_prokka_provenance.yml
       prokka --cpus ${task.cpus} --compliant --locustag ${sample_id} --centre "BCCDC-PHL" --prefix "${sample_id}" ${assembly}
       cp ${sample_id}/${sample_id}.gbk ${sample_id}_prokka.gbk
       cp ${sample_id}/${sample_id}.gff ${sample_id}_prokka.gff

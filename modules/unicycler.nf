@@ -15,7 +15,7 @@ process unicycler {
 
     script:
       """
-      printf "tool_name: unicycler\\ntool_version: \$(unicycler --version | cut -d ' ' -f 2)\\n" > ${sample_id}_unicycler_provenance.yml
+      printf -- "- tool_name: unicycler\\n  tool_version: \$(unicycler --version | cut -d ' ' -f 2)\\n" > ${sample_id}_unicycler_provenance.yml
       unicycler --threads ${task.cpus} -1 ${reads_1} -2 ${reads_2} -o ${sample_id}_assembly
       sed 's/^>/>${sample_id}_/' ${sample_id}_assembly/assembly.fasta > ${sample_id}_unicycler.fa
       cp ${sample_id}_assembly/assembly.gfa ${sample_id}_unicycler.gfa
