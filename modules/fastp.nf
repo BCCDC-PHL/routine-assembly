@@ -9,10 +9,12 @@ process fastp {
     output:
     tuple val(sample_id), path("${sample_id}_R1.trim.fastq.gz"), path("${sample_id}_R2.trim.fastq.gz"), emit: trimmed_reads
     tuple val(sample_id), path("${sample_id}_fastp.json"), emit: json
+    tuple val(sample_id), path("${sample_id}_fastp_provenance.yml"), emit: provenance
     
 
     script:
     """
+    printf -- "- tool_name: fastp\\n  tool_version: \$(fastp --version 2>&1 | cut -d ' ' -f 2)\\n" > ${sample_id}_fastp_provenance.yml
     fastp \
       -t ${task.cpus} \
       -i ${reads_1} \

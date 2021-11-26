@@ -5,6 +5,7 @@ channels:
   - defaults
 dependencies:
   - python=3
+  - perl-digest-sha=5.88
   - fastp=0.23.1
   - shovill=1.1.0
   - prokka=1.14.5
