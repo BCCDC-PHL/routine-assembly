@@ -9,7 +9,7 @@ process shovill {
       tuple val(sample_id), path(reads_1), path(reads_2)
 
     output:
-      tuple val(sample_id), path("${sample_id}_shovill.fa"), emit: assembly
+      tuple val(sample_id), path("${sample_id}_shovill.fa"), val("shovill"), emit: assembly
       tuple val(sample_id), path("${sample_id}_shovill.log"), emit: log
       tuple val(sample_id), path("${sample_id}_shovill_provenance.yml"), emit: provenance
 
