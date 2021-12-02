@@ -4,6 +4,7 @@ import argparse
 import collections
 import csv
 import json
+import sys
 
 
 def parse_transposed_quast_report(transposed_quast_report_path):
@@ -92,8 +93,35 @@ def main():
     parser.add_argument('transposed_quast_report')
     args = parser.parse_args()
 
+    output_fieldnames = [
+        'assembly_id',
+        'total_length',
+        'num_contigs',
+        'largest_contig',
+        'assembly_N50',
+        'assembly_N75',
+        'assembly_L50',
+        'assembly_L75',
+        'num_contigs_gt_0_bp',
+        'num_contigs_gt_1000_bp',
+        'num_contigs_gt_5000_bp',
+        'num_contigs_gt_10000_bp',
+        'num_contigs_gt_25000_bp',
+        'num_contigs_gt_50000_bp',
+        'total_length_gt_0_bp',
+        'total_length_gt_1000_bp',
+        'total_length_gt_5000_bp',
+        'total_length_gt_10000_bp',
+        'total_length_gt_25000_bp',
+        'total_length_gt_50000_bp',
+        'num_N_per_100_kb',
+    ]
+
     report = parse_transposed_quast_report(args.transposed_quast_report)
-    print(json.dumps(report, indent=2))
+    writer = csv.DictWriter(sys.stdout, fieldnames=output_fieldnames)
+    writer.writeheader()
+    for record in report:
+        writer.writerow(record)
 
 
 if __name__ == '__main__':

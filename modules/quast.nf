@@ -2,8 +2,6 @@ process quast {
 
     tag { sample_id }
 
-    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_quast.tsv", mode: 'copy'
-
     input:
       tuple val(sample_id), path(assembly), val(assembler)
 
@@ -25,16 +23,16 @@ process parse_quast_report {
 
     executor 'local'
 
-    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_quast.json", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_quast.csv", mode: 'copy'
 
     input:
       tuple val(sample_id), path(quast_report), val(assembler)
 
     output:
-      tuple val(sample_id), path("${sample_id}_${assembler}_quast.json")
+      tuple val(sample_id), path("${sample_id}_${assembler}_quast.csv")
 
     script:
       """
-      parse_quast_report.py ${quast_report} > ${sample_id}_${assembler}_quast.json
+      parse_quast_report.py ${quast_report} > ${sample_id}_${assembler}_quast.csv
       """
 }
