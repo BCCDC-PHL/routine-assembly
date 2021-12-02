@@ -62,10 +62,9 @@ sample-01
 ├── sample-01_20211125165316_provenance.yml
 ├── sample-01_fastp.csv
 ├── sample-01_fastp.json
-├── sample-01_prokka.gbk
-├── sample-01_prokka.gff
-├── sample-01_quast.json
-├── sample-01_quast.tsv
+├── sample-01_shovill_prokka.gbk
+├── sample-01_shovill_prokka.gff
+├── sample-01_shovill_quast.csv
 ├── sample-01_shovill.fa
 └── sample-01_shovill.log
 ```
@@ -76,16 +75,16 @@ Including the tool name suffixes to output files allows re-analysis of the same 
 sample-01
 ├── sample-01_20211125165316_provenance.yml
 ├── sample-01_20211128122118_provenance.yml
-├── sample-01_bakta.gbk
-├── sample-01_bakta.gff
-├── sample-01_bakta.json
-├── sample-01_bakta.log
+├── sample-01_unicycler_bakta.gbk
+├── sample-01_unicycler_bakta.gff
+├── sample-01_unicycler_bakta.json
+├── sample-01_unicycler_bakta.log
 ├── sample-01_fastp.csv
 ├── sample-01_fastp.json
-├── sample-01_prokka.gbk
-├── sample-01_prokka.gff
-├── sample-01_quast.json
-├── sample-01_quast.tsv
+├── sample-01_shovill_prokka.gbk
+├── sample-01_shovill_prokka.gff
+├── sample-01_shovill_quast.csv
+├── sample-01_unicycler_quast.csv
 ├── sample-01_shovill.fa
 ├── sample-01_shovill.log
 ├── sample-01_unicycler.fa
@@ -104,7 +103,7 @@ For each pipeline invocation, each sample will produce a `provenance.yml` file w
 - tool_name: prokka
   tool_version: 1.14.5
 - tool_name: quast
-  tool_version: v5.0.2
+  tool_version: 5.0.2
 - input_filename: sample-01_R1.fastq.gz
   sha256: 4ac3055ac5f03114a005aff033e7018ea98486cbebdae669880e3f0511ed21bb
 - input_filename: sample-01_R2.fastq.gz
