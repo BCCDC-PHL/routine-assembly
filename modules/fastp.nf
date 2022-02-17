@@ -15,7 +15,8 @@ process fastp {
 
     script:
     """
-    printf -- "- tool_name: fastp\\n  tool_version: \$(fastp --version 2>&1 | cut -d ' ' -f 2)\\n" > ${sample_id}_fastp_provenance.yml
+    printf -- "- process_name: fastp\\n" > ${sample_id}_fastp_provenance.yml
+    printf -- "  tool_name: fastp\\n  tool_version: \$(fastp --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_fastp_provenance.yml
     fastp \
       -t ${task.cpus} \
       -i ${reads_1} \
