@@ -135,13 +135,17 @@ sample-01
 For each pipeline invocation, each sample will produce a `provenance.yml` file with the following contents:
 
 ```yml
-- tool_name: fastp
+- process_name: fastp
+  tool_name: fastp
   tool_version: 0.23.1
-- tool_name: shovill
+- process_name: shovill
+  tool_name: shovill
   tool_version: 1.1.0
-- tool_name: prokka
+- process_name: prokka
+  tool_name: prokka
   tool_version: 1.14.5
-- tool_name: quast
+- process_name: quast
+  tool_name: quast
   tool_version: 5.0.2
 - input_filename: sample-01_R1.fastq.gz
   sha256: 4ac3055ac5f03114a005aff033e7018ea98486cbebdae669880e3f0511ed21bb
