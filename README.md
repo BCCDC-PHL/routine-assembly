@@ -92,6 +92,45 @@ sample-01
 └── sample-01_unicycler.log
 ```
 
+If the `--versioned_outdir` flag is used, then a sub-directory will be created below each sample, named with the pipeline name and minor version:
+
+```
+sample-01
+    └── routine-assembly-v0.2-output
+        ├── sample-01_20220216172238_provenance.yml
+        ├── sample-01_fastp.csv
+        ├── sample-01_fastp.json
+        ├── sample-01_shovill.fa
+        ├── sample-01_shovill.log
+        ├── sample-01_shovill_prokka.gbk
+        ├── sample-01_shovill_prokka.gff
+        └── sample-01_shovill_quast.csv
+```
+
+This is provided as a way of combining outputs of several different pipelines or re-analysis with future versions of this pipeline:
+
+```
+sample-01
+    └── routine-assembly-v0.2-output
+    │   ├── sample-01_20220216172238_provenance.yml
+    │   ├── sample-01_fastp.csv
+    │   ├── sample-01_fastp.json
+    │   ├── sample-01_shovill.fa
+    │   ├── sample-01_shovill.log
+    │   ├── sample-01_shovill_prokka.gbk
+    │   ├── sample-01_shovill_prokka.gff
+    │   └── sample-01_shovill_quast.csv
+    └── routine-assembly-v0.3-output
+        ├── sample-01_20220612091224_provenance.yml
+        ├── sample-01_fastp.csv
+        ├── sample-01_fastp.json
+        ├── sample-01_shovill.fa
+        ├── sample-01_shovill.log
+        ├── sample-01_shovill_prokka.gbk
+        ├── sample-01_shovill_prokka.gff
+        └── sample-01_shovill_quast.csv
+```
+
 ### Provenance files
 For each pipeline invocation, each sample will produce a `provenance.yml` file with the following contents:
 
