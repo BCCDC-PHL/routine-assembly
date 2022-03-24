@@ -7,6 +7,7 @@ nextflow.enable.dsl = 2
 include { hash_files } from './modules/hash_files.nf'
 include { fastp } from './modules/fastp.nf'
 include { fastp_json_to_csv } from './modules/fastp.nf'
+include { nanofilt } from './modules/nanofilt.nf'
 include { shovill } from './modules/shovill.nf'
 include { unicycler } from './modules/unicycler.nf'
 include { prokka } from './modules/prokka.nf'
@@ -25,9 +26,19 @@ workflow {
   ch_pipeline_provenance = pipeline_provenance(ch_pipeline_name.combine(ch_pipeline_version).combine(ch_start_time))
 
   if (params.samplesheet_input != 'NO_FILE') {
-    ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], it['R1'], it['R2']] }
+    if (params.hybrid) {
+      ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['R1'], it['R2'], it['LONG']]] }
+    } else {
+      ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['R1'], it['R2']]] }
+    }
   } else {
-    ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it[1], it[2]] }.unique{ it -> it[0] }
+    if (params.hybrid) {
+      ch_short_reads = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
+      ch_long_reads = Channel.fromPath( params.long_reads_search_path ).map{ it -> [it.baseName.split("_")[0], [it]] }
+      ch_fastq = ch_short_reads.join(ch_long_reads).map{ it -> [it[0], it[1] + it[2]] }
+    } else {
+      ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
+    }
   }
 
   run_shovill = params.unicycler ? false : true
@@ -35,8 +46,13 @@ workflow {
   run_prokka = params.bakta ? false : true
   run_bakta = run_prokka ? false : true
 
+  if (run_shovill && params.hybrid) {
+    System.out.println("Hybrid mode is not available with Shovill. Use --unicycler for hybrid assemblies.")
+    System.exit(-1)
+  }
+
   main:
-    hash_files(ch_fastq.map{ it -> [it[0], [it[1], it[2]]] }.combine(Channel.of("fastq-input")))
+    hash_files(ch_fastq.combine(Channel.of("fastq-input")))
 
     fastp(ch_fastq)
     fastp_json_to_csv(fastp.out.json)
@@ -44,7 +60,14 @@ workflow {
     if (run_shovill) {
       ch_assembly = shovill(fastp.out.trimmed_reads).assembly
     } else {
-      ch_assembly = unicycler(fastp.out.trimmed_reads).assembly
+      if (params.hybrid) {
+        nanofilt(ch_fastq)
+        unicycler(fastp.out.trimmed_reads.join(nanofilt.out.trimmed_reads).map{ it -> [it[0], [it[1], it[2], it[3]]] })
+	ch_assembly = unicycler.out.assembly
+      } else {
+        unicycler(fastp.out.trimmed_reads.map{ it -> [it[0], [it[1], it[2]]] })
+	ch_assembly = unicycler.out.assembly
+      }
     }
 
     if (run_prokka) {
