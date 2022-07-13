@@ -11,7 +11,7 @@ process quast {
 
     script:
       """
-      printf -- "- process_name: quast\\n" > ${sample_id}_quast_provenance.yml
+      printf -- "- process_name: quast\\n" > ${sample_id}_${assembler}_quast_provenance.yml
       printf -- "  tool_name: quast\\n  tool_version: \$(quast --version | cut -d ' ' -f 2 | tr -d 'v')\\n" >> ${sample_id}_${assembler}_quast_provenance.yml
       quast --threads ${task.cpus} ${assembly} --space-efficient --fast --output-dir ${sample_id}
       mv ${sample_id}/transposed_report.tsv ${sample_id}_${assembler}_quast.tsv
