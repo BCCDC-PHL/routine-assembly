@@ -10,6 +10,7 @@ include { fastp_json_to_csv } from './modules/fastp.nf'
 include { filtlong } from './modules/long_read_qc.nf'
 include { nanoq as nanoq_pre_filter } from './modules/long_read_qc.nf'
 include { nanoq as nanoq_post_filter } from './modules/long_read_qc.nf'
+include { merge_nanoq_reports } from './modules/long_read_qc.nf'
 include { shovill } from './modules/shovill.nf'
 include { unicycler } from './modules/unicycler.nf'
 include { prokka } from './modules/prokka.nf'
@@ -66,6 +67,7 @@ workflow {
 	nanoq_pre_filter(ch_long_reads.combine(Channel.of("pre_filter")))
 	filtlong(ch_long_reads)
 	nanoq_post_filter(filtlong.out.filtered_reads.combine(Channel.of("post_filter")))
+	merge_nanoq_reports(nanoq_pre_filter.out.report.join(nanoq_post_filter.out.report))
 	unicycler(fastp.out.trimmed_reads.join(filtlong.out.filtered_reads).map{ it -> [it[0], [it[1], it[2], it[3]]] })
 	ch_assembly = unicycler.out.assembly
       } else {
