@@ -10,4 +10,3 @@ dependencies:
   - shovill=1.1.0
   - prokka=1.14.5
   - quast=5.0.2
-  - nanofilt=2.8.0

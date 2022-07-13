@@ -7,7 +7,9 @@ nextflow.enable.dsl = 2
 include { hash_files } from './modules/hash_files.nf'
 include { fastp } from './modules/fastp.nf'
 include { fastp_json_to_csv } from './modules/fastp.nf'
-include { nanofilt } from './modules/nanofilt.nf'
+include { filtlong } from './modules/long_read_qc.nf'
+include { nanoq as nanoq_pre_filter } from './modules/long_read_qc.nf'
+include { nanoq as nanoq_post_filter } from './modules/long_read_qc.nf'
 include { shovill } from './modules/shovill.nf'
 include { unicycler } from './modules/unicycler.nf'
 include { prokka } from './modules/prokka.nf'
@@ -61,8 +63,10 @@ workflow {
       ch_assembly = shovill(fastp.out.trimmed_reads).assembly
     } else {
       if (params.hybrid) {
-        nanofilt(ch_fastq)
-        unicycler(fastp.out.trimmed_reads.join(nanofilt.out.trimmed_reads).map{ it -> [it[0], [it[1], it[2], it[3]]] })
+	nanoq_pre_filter(ch_long_reads.combine(Channel.of("pre_filter")))
+	filtlong(ch_long_reads)
+	nanoq_post_filter(filtlong.out.filtered_reads.combine(Channel.of("post_filter")))
+	unicycler(fastp.out.trimmed_reads.join(filtlong.out.filtered_reads).map{ it -> [it[0], [it[1], it[2], it[3]]] })
 	ch_assembly = unicycler.out.assembly
       } else {
         unicycler(fastp.out.trimmed_reads.map{ it -> [it[0], [it[1], it[2]]] })
@@ -86,6 +90,11 @@ workflow {
     }
     if (run_unicycler) {
       ch_provenance = ch_provenance.join(unicycler.out.provenance).map{ it -> [it[0], [it[1], it[2]]] }
+    }
+    if (params.hybrid) {
+      ch_provenance = ch_provenance.join(nanoq_pre_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+      ch_provenance = ch_provenance.join(filtlong.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+      ch_provenance = ch_provenance.join(nanoq_post_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
     if (run_prokka) {
       ch_provenance = ch_provenance.join(prokka.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
