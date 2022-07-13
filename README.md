@@ -50,6 +50,49 @@ nextflow run BCCDC-PHL/routine-assembly-nf \
   --outdir <output directory>
 ```
 
+Eg:
+```
+ID,R1,R2
+sample-01,/path/to/sample-01_R1.fastq.gz,/path/to/sample-01_R2.fastq.gz
+sample-02,/path/to/sample-02_R1.fastq.gz,/path/to/sample-02_R2.fastq.gz
+sample-03,/path/to/sample-03_R1.fastq.gz,/path/to/sample-03_R2.fastq.gz
+```
+
+### Hybrid Assembly Mode
+If long (Oxford Nanopore) and short (illumina) reads are both available, hybrid assemblies can be performed with `unicycler`. Note that `shovill` does not support hybrid assemblies.
+Add the `--hybrid` flag to perform hybrid assembly, and supply long reads using the `--long_reads` flag. Sample IDs for both long and short reads are taken from all characters of the
+fastq files up to the first underscore `_`. Sample IDs for short and long reads must match in order for the pipeline to match them up for hybrid assembly.
+
+```
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --fastq_input <fastq input directory> \
+  --long_reads <long reads input directory> \
+  --unicycler \
+  --hybrid \
+  --outdir <output directory>
+```
+
+Hybrid assembly mode is compatible with samplesheet input mode. When using a samplesheet for hybrid assemblies, an additional field with header `LONG` is required.
+
+Eg:
+```
+ID,R1,R2,LONG
+sample-01,/path/to/sample-01_R1.fastq.gz,/path/to/sample-01_R2.fastq.gz,/path/to/sample-01_L.fastq.gz
+sample-02,/path/to/sample-02_R1.fastq.gz,/path/to/sample-02_R2.fastq.gz,/path/to/sample-02_L.fastq.gz
+sample-03,/path/to/sample-03_R1.fastq.gz,/path/to/sample-03_R2.fastq.gz,/path/to/sample-03_L.fastq.gz
+```
+
+All samples in the samplesheet should have both short and long reads when running in hybrid assembly mode.
+
+Run the pipeline as follows:
+
+```
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --samplesheet /path/to/samplesheet.csv \
+  --unicycler \
+  --hybrid \
+  --outdir <output directory>
+```
 
 ## Output
 An output directory will be created for each sample under the directory provided with the `--outdir` flag. The directory will be named by sample ID, inferred from
