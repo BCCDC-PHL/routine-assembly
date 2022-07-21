@@ -59,3 +59,24 @@ process merge_nanoq_reports {
     merge_nanoq_reports.py --sample-id ${sample_id} --pre-filter ${nanoq_pre_filter} --post-filter ${nanoq_post_filter} > ${sample_id}_nanoq.csv
     """
 }
+
+
+process bandage {
+
+    tag { sample_id }
+
+    executor 'local'
+
+    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_bandage.png", mode: 'copy'
+
+    input:
+    tuple val(sample_id), path(assembly_graph)
+
+    output:
+    tuple val(sample_id), path("${sample_id}_bandage.png")
+
+    script:
+    """
+    Bandage image ${assembly_graph} ${sample_id}_bandage.png
+    """
+}
