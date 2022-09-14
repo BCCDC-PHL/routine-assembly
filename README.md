@@ -94,6 +94,16 @@ nextflow run BCCDC-PHL/routine-assembly-nf \
   --outdir <output directory>
 ```
 
+### Long-read-only Assembly Mode
+If only long (Oxford Nanopore) reads are available, a long-read-only assembly mode is supported using the [Dragonflye](https://github.com/rpetit3/dragonflye) assembler.
+
+```
+nextflow run BCCDC-PHL/routine-assembly-nf \
+  --long_reads <long reads input directory> \
+  --dragonflye \
+  --outdir <output directory>
+```
+
 ## Output
 An output directory will be created for each sample under the directory provided with the `--outdir` flag. The directory will be named by sample ID, inferred from
 the fastq files (all characters before the first underscore in the fastq filenames).
