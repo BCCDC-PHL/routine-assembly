@@ -12,8 +12,11 @@ process hash_files {
     script:
     """
     shasum -a 256 ${files_to_hash} | tr -s ' ' ',' > ${sample_id}_${file_type}.sha256.csv
+
     while IFS=',' read -r hash filename; do
-      printf -- "- input_filename: \$filename\\n  sha256: \$hash\\n" >> ${sample_id}_${file_type}_provenance.yml
+      printf -- "- input_filename: \$filename\\n"  >> ${sample_id}_${file_type}_provenance.yml;
+      printf -- "  file_type: ${file_type}\\n"     >> ${sample_id}_${file_type}_provenance.yml;
+      printf -- "  sha256: \$hash\\n"              >> ${sample_id}_${file_type}_provenance.yml;
     done < ${sample_id}_${file_type}.sha256.csv
     """
 }
