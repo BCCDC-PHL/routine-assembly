@@ -3,8 +3,8 @@ A generic pipeline for creating routine draft assemblies
 
 ## Analyses
 
-* Read trimming & QC: [fastp](https://github.com/OpenGene/fastp)
-* Genome Assembly: [shovill](https://github.com/tseemann/shovill) or [unicycler](https://github.com/rrwick/Unicycler)
+* Read trimming & QC: [fastp](https://github.com/OpenGene/fastp) and [filtlong](https://github.com/rrwick/Filtlong)
+* Genome Assembly: [shovill](https://github.com/tseemann/shovill), [unicycler](https://github.com/rrwick/Unicycler) or [dragonflye](https://github.com/rpetit3/dragonflye)
 * Gene Annotation: [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta)
 * Assembly QC: [quast](https://github.com/ablab/quast)
 
@@ -73,6 +73,8 @@ nextflow run BCCDC-PHL/routine-assembly-nf \
 ```
 
 Hybrid assembly mode is compatible with samplesheet input mode. When using a samplesheet for hybrid assemblies, an additional field with header `LONG` is required.
+Note that in this mode, because the sample IDs are explicitly provided in the samplesheet, it isn't strictly necessary that the short and long read filenames have matching sample IDs
+(though it's still probably good practice to do so).
 
 Eg:
 ```
@@ -95,7 +97,7 @@ nextflow run BCCDC-PHL/routine-assembly-nf \
 ```
 
 ### Long-read-only Assembly Mode
-If only long (Oxford Nanopore) reads are available, a long-read-only assembly mode is supported using the [Dragonflye](https://github.com/rpetit3/dragonflye) assembler.
+If only long (Oxford Nanopore) reads are available, a long-read-only assembly mode is supported using the [dragonflye](https://github.com/rpetit3/dragonflye) assembler.
 
 ```
 nextflow run BCCDC-PHL/routine-assembly-nf \

@@ -16,7 +16,13 @@ process fastp {
     script:
     """
     printf -- "- process_name: fastp\\n" > ${sample_id}_fastp_provenance.yml
-    printf -- "  tool_name: fastp\\n  tool_version: \$(fastp --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_fastp_provenance.yml
+    printf -- "  tools:\\n" >> ${sample_id}_fastp_provenance.yml
+    printf -- "    - tool_name: fastp\\n" >> ${sample_id}_fastp_provenance.yml
+    printf -- "      tool_version: \$(fastp --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_fastp_provenance.yml
+    printf -- "      parameters:\\n" >> ${sample_id}_fastp_provenance.yml
+    printf -- "        - parameter: --cut_tail\\n" >> ${sample_id}_fastp_provenance.yml
+    printf -- "          value: null" >> ${sample_id}_fastp_provenance.yml
+
     fastp \
       -t ${task.cpus} \
       -i ${reads[0]} \

@@ -16,13 +16,17 @@ process unicycler {
     script:
       long_reads = params.hybrid ? "-l ${reads[2]}" : ""
       """
-      printf -- "- process_name: unicycler\\n" > ${sample_id}_unicycler_provenance.yml
-      printf -- "  tool_name: unicycler\\n  tool_version: \$(unicycler --version | cut -d ' ' -f 2 | tr -d 'v')\\n" >> ${sample_id}_unicycler_provenance.yml
+      printf -- "- process_name: unicycler\\n"                                                 >> ${sample_id}_unicycler_provenance.yml
+      printf -- "  tools:\\n"                                                                  >> ${sample_id}_unicycler_provenance.yml
+      printf -- "    - tool_name: unicycler\\n"                                                >> ${sample_id}_unicycler_provenance.yml
+      printf -- "      tool_version: \$(unicycler --version | cut -d ' ' -f 2 | tr -d 'v')\\n" >> ${sample_id}_unicycler_provenance.yml
+
       unicycler --threads ${task.cpus} \
         -1 ${reads[0]} \
         -2 ${reads[1]} \
         ${long_reads} \
         -o ${sample_id}_assembly
+
       sed 's/^>/>${sample_id}_/' ${sample_id}_assembly/assembly.fasta > ${sample_id}_unicycler.fa
       cp ${sample_id}_assembly/assembly.gfa ${sample_id}_unicycler.gfa
       cp ${sample_id}_assembly/unicycler.log ${sample_id}_unicycler.log

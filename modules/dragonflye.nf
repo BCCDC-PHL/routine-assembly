@@ -15,12 +15,19 @@ process dragonflye {
 
     script:
       """
-      printf -- "- process_name: dragonflye\\n" > ${sample_id}_dragonflye_provenance.yml
-      printf -- "  tool_name: dragonflye\\n  tool_version: \$(dragonflye --version)\\n" >> ${sample_id}_dragonflye_provenance.yml
+      printf -- "- process_name: dragonflye\\n"                   >> ${sample_id}_dragonflye_provenance.yml
+      printf -- "  tools:\\n"                                     >> ${sample_id}_dragonflye_provenance.yml
+      printf -- "    - tool_name: dragonflye\\n"                  >> ${sample_id}_dragonflye_provenance.yml
+      printf -- "      tool_version: \$(dragonflye --version)\\n" >> ${sample_id}_dragonflye_provenance.yml
+      printf -- "      parameters:\\n"                            >> ${sample_id}_dragonflye_provenance.yml
+      printf -- "        - parameter: --opts\\n"                  >> ${sample_id}_dragonflye_provenance.yml
+      printf -- "          value: --plasmids\\n"                  >> ${sample_id}_dragonflye_provenance.yml
+
       dragonflye --cpus ${task.cpus} \
         --opts "--plasmids" \
         --reads ${reads} \
 	--outdir ${sample_id}_assembly
+
       sed 's/^>/>${sample_id}_/' ${sample_id}_assembly/contigs.fa > ${sample_id}_dragonflye.fa
       cp ${sample_id}_assembly/flye-unpolished.gfa ${sample_id}_dragonflye.gfa
       cp ${sample_id}_assembly/dragonflye.log ${sample_id}_dragonflye.log

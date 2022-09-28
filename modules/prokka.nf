@@ -14,9 +14,16 @@ process prokka {
 
     script:
       """
-      printf -- "- process_name: prokka\\n" > ${sample_id}_${assembler}_prokka_provenance.yml
-      printf -- "  tool_name: prokka\\n  tool_version: \$(prokka --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_${assembler}_prokka_provenance.yml
+      printf -- "- process_name: prokka\\n"                                          >> ${sample_id}_${assembler}_prokka_provenance.yml
+      printf -- "  tools:\\n"                                                        >> ${sample_id}_${assembler}_prokka_provenance.yml
+      printf -- "    - tool_name: prokka\\n"                                         >> ${sample_id}_${assembler}_prokka_provenance.yml  
+      printf -- "      tool_version: \$(prokka --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_${assembler}_prokka_provenance.yml  
+      printf -- "      parameters:\\n"                                               >> ${sample_id}_${assembler}_prokka_provenance.yml
+      printf -- "        - parameter: --compliant\\n"                                >> ${sample_id}_${assembler}_prokka_provenance.yml
+      printf -- "          value: null"                                              >> ${sample_id}_${assembler}_prokka_provenance.yml
+
       prokka --cpus ${task.cpus} --compliant --locustag ${sample_id} --centre "BCCDC-PHL" --prefix "${sample_id}" ${assembly}
+
       cp ${sample_id}/${sample_id}.gbk ${sample_id}_${assembler}_prokka.gbk
       cp ${sample_id}/${sample_id}.gff ${sample_id}_${assembler}_prokka.gff
       """

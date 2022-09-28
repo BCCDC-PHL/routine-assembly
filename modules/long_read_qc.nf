@@ -6,18 +6,26 @@ process filtlong {
     tuple val(sample_id), path(reads)
 
     output:
-    tuple val(sample_id), path("${sample_id}_L.filtered.fastq.gz"), emit: filtered_reads
+    tuple val(sample_id), path("${sample_id}_RL.filtered.fastq.gz"), emit: filtered_reads
     tuple val(sample_id), path("${sample_id}_filtlong_provenance.yml"), emit: provenance
 
     script:
     """
-    printf -- "- process_name: filtlong\\n" > ${sample_id}_filtlong_provenance.yml
-    printf -- "  tool_name: filtlong\\n  tool_version: \$(filtlong --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_filtlong_provenance.yml
+    printf -- "- process_name: filtlong\\n"                                          >> ${sample_id}_filtlong_provenance.yml
+    printf -- "  tools:\\n"                                                          >> ${sample_id}_filtlong_provenance.yml
+    printf -- "    - tool_name: filtlong\\n"                                         >> ${sample_id}_filtlong_provenance.yml
+    printf -- "      tool_version: \$(filtlong --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_filtlong_provenance.yml
+    printf -- "      parameters:\\n"                                                 >> ${sample_id}_filtlong_provenance.yml
+    printf -- "        - parameter: --min_length\\n"                                 >> ${sample_id}_filtlong_provenance.yml
+    printf -- "          value: ${params.filtlong_min_length}\\n"                    >> ${sample_id}_filtlong_provenance.yml
+    printf -- "        - parameter: --keep_percent\\n"                               >> ${sample_id}_filtlong_provenance.yml
+    printf -- "          value: ${params.filtlong_keep_percent}\\n"                  >> ${sample_id}_filtlong_provenance.yml
+
     filtlong \
       --min_length   ${params.filtlong_min_length} \
       --keep_percent ${params.filtlong_keep_percent} \
       ${reads} | \
-        gzip > ${sample_id}_L.filtered.fastq.gz
+        gzip > ${sample_id}_RL.filtered.fastq.gz
     """
 }
 
@@ -34,8 +42,14 @@ process nanoq {
 
     script:
     """
-    printf -- "- process_name: nanoq_${pre_or_post_filter}\\n" > ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
-    printf -- "  tool_name: nanoq\\n  tool_version: \$(nanoq --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+    printf -- "- process_name: nanoq_${pre_or_post_filter}\\n"                    >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+    printf -- "  tools:\\n"                                                       >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+    printf -- "    - tool_name: nanoq\\n"                                         >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+    printf -- "      tool_version: \$(nanoq --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+    printf -- "      parameters:\\n"                                              >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+    printf -- "        - parameter: --stats\\n"                                   >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+    printf -- "          value: null\\n"                                          >> ${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml
+
     nanoq --header --stats --input ${reads} | tr ' ' ',' > ${sample_id}_nanoq_${pre_or_post_filter}.csv
     """
 }
