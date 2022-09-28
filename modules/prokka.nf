@@ -20,7 +20,7 @@ process prokka {
       printf -- "      tool_version: \$(prokka --version 2>&1 | cut -d ' ' -f 2)\\n" >> ${sample_id}_${assembler}_prokka_provenance.yml  
       printf -- "      parameters:\\n"                                               >> ${sample_id}_${assembler}_prokka_provenance.yml
       printf -- "        - parameter: --compliant\\n"                                >> ${sample_id}_${assembler}_prokka_provenance.yml
-      printf -- "          value: null"                                              >> ${sample_id}_${assembler}_prokka_provenance.yml
+      printf -- "          value: null\\n"                                           >> ${sample_id}_${assembler}_prokka_provenance.yml
 
       prokka --cpus ${task.cpus} --compliant --locustag ${sample_id} --centre "BCCDC-PHL" --prefix "${sample_id}" ${assembly}
 
