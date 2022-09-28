@@ -190,25 +190,39 @@ sample-01
 For each pipeline invocation, each sample will produce a `provenance.yml` file with the following contents:
 
 ```yml
-- process_name: fastp
-  tool_name: fastp
-  tool_version: 0.23.1
-- process_name: shovill
-  tool_name: shovill
-  tool_version: 1.1.0
-- process_name: prokka
-  tool_name: prokka
-  tool_version: 1.14.5
-- process_name: quast
-  tool_name: quast
-  tool_version: 5.0.2
+- pipeline_name: BCCDC-PHL/routine-assembly
+  pipeline_version: 0.3.0
+- timestamp_analysis_start: 2021-11-25T16:53:10.549863
 - input_filename: sample-01_R1.fastq.gz
   sha256: 4ac3055ac5f03114a005aff033e7018ea98486cbebdae669880e3f0511ed21bb
+  file_type: fastq-input
 - input_filename: sample-01_R2.fastq.gz
   sha256: 8db388f56a51920752319c67b5308c7e99f2a566ca83311037a425f8d6bb1ecc
-- pipeline_name: BCCDC-PHL/routine-assembly
-  pipeline_version: 0.1.0
-- timestamp_analysis_start: 2021-11-25T16:53:10.549863
+  file_type: fastq-input
+- process_name: fastp
+  tools:
+    - tool_name: fastp
+      tool_version: 0.23.1
+- process_name: shovill
+  tools:
+    - tool_name: shovill
+      tool_version: 1.1.0
+- process_name: prokka
+  tools:
+    - tool_name: prokka
+      tool_version: 1.14.5
+      parameters:
+        - parameter: --compliant
+          value: null
+- process_name: quast
+  tools:
+    - tool_name: quast
+      tool_version: 5.0.2
+      parameters:
+        - parameter: --space-efficient
+          value: null
+        - parameter: --fast
+          value: null
 ```
 
 The filename of the provenance file includes a timestamp with format `YYYYMMDDHHMMSS` to ensure that re-analysis of the same sample will create a unique `provenance.yml` file.
