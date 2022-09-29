@@ -1,9 +1,0 @@
-name: long-read-qc
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - filtlong=0.2.1
-  - nanoq=0.9.0
-  - bandage=0.8.1

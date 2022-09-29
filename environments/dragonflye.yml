@@ -1,7 +1,0 @@
-name: routine-assembly-dragonflye
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - dragonflye=1.0.13

@@ -6,7 +6,7 @@ process filtlong {
     tuple val(sample_id), path(reads)
 
     output:
-    tuple val(sample_id), path("${sample_id}_RL.filtered.fastq.gz"), emit: filtered_reads
+    tuple val(sample_id), path("${sample_id}_RL.filtered.fastq.gz"),    emit: filtered_reads
     tuple val(sample_id), path("${sample_id}_filtlong_provenance.yml"), emit: provenance
 
     script:
@@ -31,13 +31,13 @@ process filtlong {
 
 process nanoq {
 
-    tag { sample_id }
+    tag { sample_id + ' / ' + pre_or_post_filter }
 
     input:
     tuple val(sample_id), path(reads), val(pre_or_post_filter)
 
     output:
-    tuple val(sample_id), path("${sample_id}_nanoq_*.csv"), emit: report
+    tuple val(sample_id), path("${sample_id}_nanoq_*.csv"),                                emit: report
     tuple val(sample_id), path("${sample_id}_nanoq_${pre_or_post_filter}_provenance.yml"), emit: provenance
 
     script:
@@ -77,20 +77,20 @@ process merge_nanoq_reports {
 
 process bandage {
 
-    tag { sample_id }
+    tag { sample_id + ' / ' + assembly_mode }
 
     executor 'local'
 
-    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_bandage.png", mode: 'copy'
+    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_${assembly_mode}_bandage.png", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(assembly_graph)
+    tuple val(sample_id), path(assembly_graph), val(assembler), val(assembly_mode)
 
     output:
-    tuple val(sample_id), path("${sample_id}_bandage.png")
+    tuple val(sample_id), path("${sample_id}_${assembler}_${assembly_mode}_bandage.png")
 
     script:
     """
-    Bandage image ${assembly_graph} ${sample_id}_bandage.png
+    Bandage image ${assembly_graph} ${sample_id}_${assembler}_${assembly_mode}_bandage.png
     """
 }
