@@ -4,4 +4,4 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - bakta=1.2.1
+  - bakta=1.5.1

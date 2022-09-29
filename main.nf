@@ -4,21 +4,21 @@ import java.time.LocalDateTime
 
 nextflow.enable.dsl = 2
 
-include { hash_files } from './modules/hash_files.nf'
-include { fastp } from './modules/fastp.nf'
-include { fastp_json_to_csv } from './modules/fastp.nf'
-include { filtlong } from './modules/long_read_qc.nf'
-include { nanoq as nanoq_pre_filter } from './modules/long_read_qc.nf'
+include { hash_files }                 from './modules/hash_files.nf'
+include { fastp }                      from './modules/fastp.nf'
+include { fastp_json_to_csv }          from './modules/fastp.nf'
+include { filtlong }                   from './modules/long_read_qc.nf'
+include { nanoq as nanoq_pre_filter }  from './modules/long_read_qc.nf'
 include { nanoq as nanoq_post_filter } from './modules/long_read_qc.nf'
-include { merge_nanoq_reports } from './modules/long_read_qc.nf'
-include { unicycler } from './modules/unicycler.nf'
-include { prokka } from './modules/prokka.nf'
-include { bakta } from './modules/bakta.nf'
-include { quast } from './modules/quast.nf'
-include { parse_quast_report } from './modules/quast.nf'
-include { bandage } from './modules/long_read_qc.nf'
-include { pipeline_provenance } from './modules/provenance.nf'
-include { collect_provenance } from './modules/provenance.nf'
+include { merge_nanoq_reports }        from './modules/long_read_qc.nf'
+include { unicycler }                  from './modules/unicycler.nf'
+include { prokka }                     from './modules/prokka.nf'
+include { bakta }                      from './modules/bakta.nf'
+include { quast }                      from './modules/quast.nf'
+include { parse_quast_report }         from './modules/quast.nf'
+include { bandage }                    from './modules/long_read_qc.nf'
+include { pipeline_provenance }        from './modules/provenance.nf'
+include { collect_provenance }         from './modules/provenance.nf'
 
 
 workflow {
