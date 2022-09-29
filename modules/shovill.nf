@@ -15,8 +15,14 @@ process shovill {
 
     script:
       """
-      printf -- "- process_name: shovill\\n" > ${sample_id}_shovill_provenance.yml
-      printf -- "  tool_name: shovill\\n  tool_version: \$(shovill --version | cut -d ' ' -f 2)\\n" >> ${sample_id}_shovill_provenance.yml
+      printf -- "- process_name: shovill\\n"                                     >> ${sample_id}_shovill_provenance.yml
+      printf -- "  tools:\\n"                                                    >> ${sample_id}_shovill_provenance.yml
+      printf -- "    - tool_name: shovill\\n"                                    >> ${sample_id}_shovill_provenance.yml
+      printf -- "      tool_version: \$(shovill --version | cut -d ' ' -f 2)\\n" >> ${sample_id}_shovill_provenance.yml
+      printf -- "      parameters:\\n"                                           >> ${sample_id}_shovill_provenance.yml
+      printf -- "        - parameter: --trim\\n"                                 >> ${sample_id}_shovill_provenance.yml
+      printf -- "          value: null\\n"                                       >> ${sample_id}_shovill_provenance.yml
+
       shovill --cpus ${task.cpus} --trim --namefmt \"${sample_id}_contig%0d\" --outdir ${sample_id}_assembly --R1 ${reads_1} --R2 ${reads_2}
       cp ${sample_id}_assembly/contigs.fa ${sample_id}_shovill.fa
       cp ${sample_id}_assembly/shovill.log ${sample_id}_shovill.log
