@@ -28,8 +28,12 @@ process bakta {
       printf -- "        - parameter: --keep-contig-headers\\n"                >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
       printf -- "          value: null\\n"                                     >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
 
+      mkdir tmp
+
       bakta \
         --threads ${task.cpus} \
+        --tmp-dir ./tmp \
+        --debug \
         --db ${params.bakta_db} \
         --compliant \
         --keep-contig-headers \
