@@ -49,7 +49,7 @@ workflow {
     if (params.hybrid) {
       ch_assembly_mode = Channel.of("hybrid")
       ch_short_reads = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
-      ch_long_reads = Channel.fromPath( params.long_reads_search_path ).map{ it -> [it.baseName.split("\\.")[0], [it]] }
+      ch_long_reads = Channel.fromPath( params.long_reads_search_path ).map{ it -> [it.baseName.split("_")[0], [it]] }
       ch_fastq = ch_short_reads.join(ch_long_reads).map{ it -> [it[0], it[1] + it[2]] }
     } else if (params.long_only) {
       ch_assembly_mode = Channel.of("long")
