@@ -29,6 +29,7 @@ process unicycler {
 	${long_reads} \
         -o ${sample_id}_assembly
 
+      check_for_empty_assembly.py --assembly ${sample_id}_assembly/assembly.fasta
       sed 's/^>/>${sample_id}_/' ${sample_id}_assembly/assembly.fasta > ${sample_id}_unicycler_${assembly_mode}.fa
       cp ${sample_id}_assembly/assembly.gfa ${sample_id}_unicycler_${assembly_mode}.gfa
       cp ${sample_id}_assembly/unicycler.log ${sample_id}_unicycler_${assembly_mode}.log

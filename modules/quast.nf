@@ -20,11 +20,14 @@ process quast {
       printf -- "          value: null\\n"                                                 >> ${sample_id}_${assembler}_${assembly_mode}_quast_provenance.yml
       printf -- "        - parameter: --fast\\n"                                           >> ${sample_id}_${assembler}_${assembly_mode}_quast_provenance.yml
       printf -- "          value: null\\n"                                                 >> ${sample_id}_${assembler}_${assembly_mode}_quast_provenance.yml
+      printf -- "        - parameter: --min-contig\\n"                                     >> ${sample_id}_${assembler}_${assembly_mode}_quast_provenance.yml
+      printf -- "          value: 0\\n"                                                    >> ${sample_id}_${assembler}_${assembly_mode}_quast_provenance.yml
 
       quast \
         --threads ${task.cpus} \
         --space-efficient \
         --fast \
+	--min-contig 0 \
         --output-dir ${sample_id} \
         ${assembly}
 
