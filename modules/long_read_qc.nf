@@ -80,6 +80,7 @@ process bandage {
     tag { sample_id + ' / ' + assembly_mode }
 
     executor 'local'
+    errorStrategy 'ignore'
 
     publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_${assembly_mode}_bandage.png", mode: 'copy'
 
