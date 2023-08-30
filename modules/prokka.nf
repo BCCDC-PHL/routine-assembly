@@ -2,6 +2,8 @@ process prokka {
 
     tag { sample_id + ' / ' + assembly_mode}
 
+    errorStrategy 'ignore'
+
     publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.pipeline_minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_prokka.{gbk,gff}", mode: 'copy'
 
     input:
