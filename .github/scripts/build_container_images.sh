@@ -8,4 +8,7 @@ for env_yaml in ../environments/*.yml; do
     echo "building image ${image_name} from file ${env_yaml}..."
     cp ${env_yaml} ./environment.yml
     apptainer build ${image_name}.sif ../.github/data/conda-env.def
+    ls -lh ${image_name}.sif
 done
+
+
