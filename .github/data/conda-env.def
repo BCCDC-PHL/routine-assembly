@@ -1,0 +1,14 @@
+Bootstrap: docker
+
+From: continuumio/miniconda3
+
+%files
+    environment.yml
+
+%post
+    /opt/conda/bin/conda env create -f environment.yml -p /opt/conda/envs/env
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> $SINGULARITY_ENVIRONMENT
+    echo "conda activate env" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+    exec "$@"

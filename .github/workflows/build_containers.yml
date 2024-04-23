@@ -4,7 +4,7 @@ on:
   pull_request:
     
 jobs:
-  push:
+  build:
     runs-on: ubuntu-latest
     permissions:
       packages: write
