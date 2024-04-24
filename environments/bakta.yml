@@ -1,4 +1,4 @@
-name: bakta
+name: routine-assembly-bakta
 channels:
   - conda-forge
   - bioconda
