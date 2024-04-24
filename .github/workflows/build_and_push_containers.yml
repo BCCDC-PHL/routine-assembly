@@ -9,6 +9,10 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+    
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
