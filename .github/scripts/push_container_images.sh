@@ -8,8 +8,6 @@ for image_file in ./apptainer-build/*.sif; do
     IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
     VERSION=$(echo "${GITHUB_REF}" | sed -e 's,.*/\(.*\),\1,')
     [ "$VERSION" == "main" ] && VERSION=latest
-    # Temporarily set version to test
-    VERSION=test
     echo "Pushing $image to $IMAGE_ID:$VERSION..., using username ${GHCR_USERNAME}"
     echo ${GITHUB_TOKEN} | apptainer registry login -u ${GHCR_USERNAME} --password-stdin oras://ghcr.io
     apptainer push ${image_file} oras://${IMAGE_ID}:${VERSION}
