@@ -1,3 +1,5 @@
+[![Tests](https://github.com/BCCDC-PHL/routine-assembly/actions/workflows/tests.yml/badge.svg)](https://github.com/BCCDC-PHL/routine-assembly/actions/workflows/tests.yml)
+
 # Routine Assembly
 A generic pipeline for creating routine draft assemblies. Supports both short (illumina) and long (Oxford Nanopore) reads, or hybrid assemblies with both short and long reads.
 Optionally annotate genes. Collects quality info on both incoming and outgoing datasets. 
@@ -211,8 +213,10 @@ For each pipeline invocation, each sample will produce a `provenance.yml` file w
 
 ```yml
 - pipeline_name: BCCDC-PHL/routine-assembly
-  pipeline_version: 0.4.0
-- timestamp_analysis_start: 2022-08-16T13:22:11.553143
+  pipeline_version: 0.4.5
+  nextflow_session_id: aad504aa-848f-4e85-8a9c-2aa43901d1b4
+  nextflow_run_name: pedantic_carson
+  timestamp_analysis_start: 2024-04-25T10:37:19.351714-07:00
 - input_filename: sample-01_R1.fastq.gz
   sha256: 4ac3055ac5f03114a005aff033e7018ea98486cbebdae669880e3f0511ed21bb
   file_type: fastq-input
