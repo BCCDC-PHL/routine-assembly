@@ -4,6 +4,7 @@ import argparse
 import csv
 import glob
 import json
+import os
 import urllib.request
 
 from jsonschema import validate
@@ -20,12 +21,18 @@ def check_provenance_format_valid(provenance_files, schema):
                 provenance = yaml.load(f, Loader=yaml.BaseLoader)
                 validate(provenance, schema)
             except Exception as e:
+                print(f"Error validating {provenance_file}: {e}")
+                exit(1)
                 return False
 
     return True
 
 
 def main(args):
+
+    output_dir = os.path.dirname(args.output)
+    os.makedirs(output_dir, exist_ok=True)
+    
     provenance_schema_url = "https://raw.githubusercontent.com/BCCDC-PHL/pipeline-provenance-schema/main/schema/pipeline-provenance.json"
     provenance_schema_path = ".github/data/pipeline-provenance.json"
     urllib.request.urlretrieve(provenance_schema_url, provenance_schema_path)

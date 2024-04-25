@@ -26,7 +26,14 @@ workflow {
   ch_pipeline_name = Channel.of(workflow.manifest.name)
   ch_pipeline_version = Channel.of(workflow.manifest.version)
 
-  ch_pipeline_provenance = pipeline_provenance(ch_pipeline_name.combine(ch_pipeline_version).combine(ch_start_time))
+  ch_workflow_metadata = Channel.value([
+	workflow.sessionId,
+	workflow.runName,
+	workflow.manifest.name,
+	workflow.manifest.version,
+	workflow.start,
+  ])
+  ch_pipeline_provenance = pipeline_provenance(ch_workflow_metadata)
 
   if (params.samplesheet_input != 'NO_FILE') {
     if (params.hybrid) {
