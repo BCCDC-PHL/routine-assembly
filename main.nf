@@ -22,91 +22,89 @@ include { collect_provenance }         from './modules/provenance.nf'
 
 
 workflow {
-  ch_start_time = Channel.of(LocalDateTime.now())
-  ch_pipeline_name = Channel.of(workflow.manifest.name)
-  ch_pipeline_version = Channel.of(workflow.manifest.version)
 
-  ch_workflow_metadata = Channel.value([
+    ch_workflow_metadata = Channel.value([
 	workflow.sessionId,
 	workflow.runName,
 	workflow.manifest.name,
 	workflow.manifest.version,
 	workflow.start,
-  ])
-  ch_pipeline_provenance = pipeline_provenance(ch_workflow_metadata)
+    ])
+    
+    ch_pipeline_provenance = pipeline_provenance(ch_workflow_metadata)
 
-  if (params.samplesheet_input != 'NO_FILE') {
-    if (params.hybrid) {
-      ch_assembly_mode = Channel.of("hybrid")
-      ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['R1'], it['R2'], it['LONG']]] }
-      ch_short_reads = ch_fastq.map{ it -> [it[0], [it[1][0], it[1][1]]] }
-      ch_long_reads = ch_fastq.map{ it -> [it[0], it[1][2]] }
-    } else if (params.long_only) {
-      ch_assembly_mode = Channel.of("long")
-      ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['LONG']]] }
-      ch_short_reads = Channel.of()
-      ch_long_reads = ch_fastq
+    if (params.samplesheet_input != 'NO_FILE') {
+	if (params.hybrid) {
+	    ch_assembly_mode = Channel.of("hybrid")
+	    ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['R1'], it['R2'], it['LONG']]] }
+	    ch_short_reads = ch_fastq.map{ it -> [it[0], [it[1][0], it[1][1]]] }
+	    ch_long_reads = ch_fastq.map{ it -> [it[0], it[1][2]] }
+	} else if (params.long_only) {
+	    ch_assembly_mode = Channel.of("long")
+	    ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['LONG']]] }
+	    ch_short_reads = Channel.of()
+	    ch_long_reads = ch_fastq
+	} else {
+	    ch_assembly_mode = Channel.of("short")
+	    ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['R1'], it['R2']]] }
+	    ch_short_reads = ch_fastq
+	    ch_long_reads = Channel.of()
+	}
     } else {
-      ch_assembly_mode = Channel.of("short")
-      ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['R1'], it['R2']]] }
-      ch_short_reads = ch_fastq
-      ch_long_reads = Channel.of()
+	if (params.hybrid) {
+	    ch_assembly_mode = Channel.of("hybrid")
+	    ch_short_reads = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
+	    ch_long_reads = Channel.fromPath( params.long_reads_search_path ).map{ it -> [it.baseName.split("_")[0], [it]] }
+	    ch_fastq = ch_short_reads.join(ch_long_reads).map{ it -> [it[0], it[1] + it[2]] }
+	} else if (params.long_only) {
+	    ch_assembly_mode = Channel.of("long")
+	    ch_short_reads = Channel.of()
+	    ch_long_reads = Channel.fromPath( params.long_reads_search_path ).map{ it -> [it.baseName.split("_")[0], [it]] }
+	    ch_fastq = ch_long_reads
+	} else {
+	    ch_assembly_mode = Channel.of("short")
+	    ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
+	    ch_short_reads = ch_fastq
+	    ch_long_reads = Channel.of()
+	}
     }
-  } else {
-    if (params.hybrid) {
-      ch_assembly_mode = Channel.of("hybrid")
-      ch_short_reads = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
-      ch_long_reads = Channel.fromPath( params.long_reads_search_path ).map{ it -> [it.baseName.split("_")[0], [it]] }
-      ch_fastq = ch_short_reads.join(ch_long_reads).map{ it -> [it[0], it[1] + it[2]] }
-    } else if (params.long_only) {
-      ch_assembly_mode = Channel.of("long")
-      ch_short_reads = Channel.of()
-      ch_long_reads = Channel.fromPath( params.long_reads_search_path ).map{ it -> [it.baseName.split("_")[0], [it]] }
-      ch_fastq = ch_long_reads
-    } else {
-      ch_assembly_mode = Channel.of("short")
-      ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
-      ch_short_reads = ch_fastq
-      ch_long_reads = Channel.of()
+
+    if (params.long_only && params.hybrid) {
+	System.out.println("Choose one of --long or --hybrid (but not both).")
+	System.exit(-1)
     }
-  }
 
-  if (params.long_only && params.hybrid) {
-    System.out.println("Choose one of --long or --hybrid (but not both).")
-    System.exit(-1)
-  }  
-
-  main:
+    main:
     ch_provenance = ch_fastq.map{ it -> it[0] }
 
     hash_files(ch_fastq.combine(Channel.of("fastq-input")))
 
     if (params.hybrid) {
-      fastp(ch_short_reads)
-      fastp_json_to_csv(fastp.out.json)
-      nanoq_pre_filter(ch_long_reads.combine(Channel.of("pre_filter")))
-      filtlong(ch_long_reads)
-      nanoq_post_filter(filtlong.out.filtered_reads.combine(Channel.of("post_filter")))
-      merge_nanoq_reports(nanoq_pre_filter.out.report.join(nanoq_post_filter.out.report))
-      unicycler(fastp.out.trimmed_reads.join(filtlong.out.filtered_reads).map{ it -> [it[0], [it[1], it[2], it[3]]] }.combine(ch_assembly_mode))
+	fastp(ch_short_reads)
+	fastp_json_to_csv(fastp.out.json)
+	nanoq_pre_filter(ch_long_reads.combine(Channel.of("pre_filter")))
+	filtlong(ch_long_reads)
+	nanoq_post_filter(filtlong.out.filtered_reads.combine(Channel.of("post_filter")))
+	merge_nanoq_reports(nanoq_pre_filter.out.report.join(nanoq_post_filter.out.report))
+	unicycler(fastp.out.trimmed_reads.join(filtlong.out.filtered_reads).map{ it -> [it[0], [it[1], it[2], it[3]]] }.combine(ch_assembly_mode))
     } else if (params.long_only) {
-      nanoq_pre_filter(ch_long_reads.combine(Channel.of("pre_filter")).map{ it -> [it[0], it[1][0], it[2]] })
-      filtlong(ch_long_reads)
-      nanoq_post_filter(filtlong.out.filtered_reads.combine(Channel.of("post_filter")))
-      merge_nanoq_reports(nanoq_pre_filter.out.report.join(nanoq_post_filter.out.report))
-      unicycler(ch_long_reads.combine(ch_assembly_mode))
+	nanoq_pre_filter(ch_long_reads.combine(Channel.of("pre_filter")).map{ it -> [it[0], it[1][0], it[2]] })
+	filtlong(ch_long_reads)
+	nanoq_post_filter(filtlong.out.filtered_reads.combine(Channel.of("post_filter")))
+	merge_nanoq_reports(nanoq_pre_filter.out.report.join(nanoq_post_filter.out.report))
+	unicycler(ch_long_reads.combine(ch_assembly_mode))
     } else {
-      fastp(ch_short_reads)
-      fastp_json_to_csv(fastp.out.json)
-      unicycler(fastp.out.trimmed_reads.map{ it -> [it[0], [it[1], it[2]]] }.combine(ch_assembly_mode))
+	fastp(ch_short_reads)
+	fastp_json_to_csv(fastp.out.json)
+	unicycler(fastp.out.trimmed_reads.map{ it -> [it[0], [it[1], it[2]]] }.combine(ch_assembly_mode))
     }
 
     if (params.prokka) {
-      prokka(unicycler.out.assembly)
+	prokka(unicycler.out.assembly)
     }
 
     if (params.bakta) {
-      bakta(unicycler.out.assembly)
+	bakta(unicycler.out.assembly)
     }
 
     quast(unicycler.out.assembly)
@@ -123,23 +121,23 @@ workflow {
     ch_provenance = ch_provenance.join(hash_files.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
 
     if (params.hybrid || params.long_only) {
-      ch_provenance = ch_provenance.join(nanoq_pre_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
-      ch_provenance = ch_provenance.join(filtlong.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
-      ch_provenance = ch_provenance.join(nanoq_post_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+	ch_provenance = ch_provenance.join(nanoq_pre_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+	ch_provenance = ch_provenance.join(filtlong.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+	ch_provenance = ch_provenance.join(nanoq_post_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
 
     if (!params.long_only) {
-      ch_provenance = ch_provenance.join(fastp.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+	ch_provenance = ch_provenance.join(fastp.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
 
     ch_provenance = ch_provenance.join(unicycler.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
 
     if (params.prokka) {
-      ch_provenance = ch_provenance.join(prokka.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+	ch_provenance = ch_provenance.join(prokka.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
 
     if (params.bakta) {
-      ch_provenance = ch_provenance.join(bakta.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+	ch_provenance = ch_provenance.join(bakta.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
 
     ch_provenance = ch_provenance.join(quast.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
