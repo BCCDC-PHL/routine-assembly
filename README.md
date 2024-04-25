@@ -1,3 +1,5 @@
+[![Tests](https://github.com/BCCDC-PHL/routine-assembly/actions/workflows/tests.yml/badge.svg)](https://github.com/BCCDC-PHL/routine-assembly/actions/workflows/tests.yml)
+
 # Routine Assembly
 A generic pipeline for creating routine draft assemblies. Supports both short (illumina) and long (Oxford Nanopore) reads, or hybrid assemblies with both short and long reads.
 Optionally annotate genes. Collects quality info on both incoming and outgoing datasets. 
