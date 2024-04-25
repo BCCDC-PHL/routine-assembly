@@ -11,6 +11,23 @@ Optionally annotate genes. Collects quality info on both incoming and outgoing d
 * Gene Annotation: [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta)
 * Assembly QC: [quast](https://github.com/ablab/quast), [bandage](https://github.com/rrwick/bandage)
 
+```mermaid
+flowchart TD
+  short_reads --> fastp(fastp)
+  long_reads --> filtlong(filtlong)
+  filtlong -- filtered_reads --> unicycler(unicycler)
+  fastp -- trimmed_reads --> unicycler
+  unicycler --> assembly["assembly.fa"]
+  unicycler --> prokka(prokka)
+  prokka --> prokka_genes["prokka_genes.gff"]
+  unicycler --> bakta(bakta)
+  bakta --> bakta_genes["bakta_genes.gff"]
+  unicycler --> quast(quast)
+  unicycler --> bandage(bandage)
+  bandage --> bandage_diagram["bandage_diagram.png"]
+  quast --> assembly_qc["assembly_qc.csv"]
+```
+
 ## Usage
 
 By default, unicycler will be used for assembly of short reads, and no gene annotation will be run:
