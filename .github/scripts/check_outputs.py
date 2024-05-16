@@ -27,6 +27,36 @@ def check_provenance_format_valid(provenance_files, schema):
 
     return True
 
+def check_expected_files_exist(output_dir, sample_ids):
+    """
+    Check that the expected files exist in the output directory.
+
+    :param output_dir: Path to the output directory
+    :param sample_ids: List of sample IDs
+    :return: True if all expected files exist, False otherwise
+    :rtype: bool
+    """
+    for sample_id in sample_ids:
+        expected_files = [
+            f"{sample_id}/{sample_id}_fastp.csv",
+            f"{sample_id}/{sample_id}_fastp.json",
+            f"{sample_id}/{sample_id}_unicycler_short.fa",
+            f"{sample_id}/{sample_id}_unicycler_short.gfa",
+            f"{sample_id}/{sample_id}_unicycler_short.log",
+            f"{sample_id}/{sample_id}_unicycler_short_bandage.png",
+            f"{sample_id}/{sample_id}_unicycler_short_prokka.gbk",
+            f"{sample_id}/{sample_id}_unicycler_short_prokka.gff",
+            f"{sample_id}/{sample_id}_unicycler_short_quast.csv",
+        ]
+
+        for expected_file in expected_files:
+            expected_file_path = os.path.join(output_dir, expected_file)
+            if not os.path.exists(expected_file_path):
+                print(f"Expected file {expected_file_path} not found")
+                return False
+
+    return True
+
 
 def main(args):
 
@@ -44,11 +74,17 @@ def main(args):
     provenace_files_glob = f"{args.pipeline_outdir}/**/*_provenance.yml"
     provenance_files = glob.glob(provenace_files_glob, recursive=True)
 
-    # TODO: add more tests
+    sample_ids = [os.path.basename(provenance_file).split("_")[0] for provenance_file in provenance_files]
+
+    # TODO: Add more tests
     tests = [
         {
             "test_name": "provenance_format_valid",
             "test_passed": check_provenance_format_valid(provenance_files, provenance_schema),
+        },
+        {
+            "test_name": "all_expected_files_exist",
+            "test_passed": check_expected_files_exist(args.pipeline_outdir, sample_ids),
         },
     ]
 
