@@ -2,7 +2,7 @@ process unicycler {
 
     tag { sample_id + ' / ' + assembly_mode }
 
-    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.pipeline_minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_unicycler_${assembly_mode}.{fa,gfa,log}", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_unicycler_${assembly_mode}.{fa,gfa,log}", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads), val(assembly_mode)
