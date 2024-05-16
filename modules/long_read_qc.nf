@@ -60,7 +60,7 @@ process merge_nanoq_reports {
 
     executor 'local'
 
-    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_nanoq.csv", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_nanoq.csv", mode: 'copy'
 
     input:
     tuple val(sample_id), path(nanoq_pre_filter), path(nanoq_post_filter)
@@ -82,7 +82,7 @@ process bandage {
     executor 'local'
     errorStrategy 'ignore'
 
-    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_${assembly_mode}_bandage.png", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_${assembly_mode}_bandage.png", mode: 'copy'
 
     input:
     tuple val(sample_id), path(assembly_graph), val(assembler), val(assembly_mode)
