@@ -17,6 +17,7 @@ process bakta {
     tuple val(sample_id), path("${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml"), emit: provenance
 
     script:
+    locustag = params.use_sample_id_as_locus_tag ? "--locust-tag \"${sample_id}\"" : ""
     """
     printf -- "- process_name: bakta\\n"                                     >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
     printf -- "  tools:\\n"                                                  >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
@@ -39,7 +40,7 @@ process bakta {
         --db ${params.bakta_db} \
         --compliant \
         --keep-contig-headers \
-        --locus-tag ${sample_id} \
+        ${locustag} \
         --prefix "${sample_id}" \
         ${assembly}
 
