@@ -26,8 +26,6 @@ process bakta {
     printf -- "      parameters:\\n"                                         >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
     printf -- "        - parameter: --db\\n"                                 >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
     printf -- "          value: ${params.bakta_db}\\n"                       >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
-    printf -- "        - parameter: --compliant\\n"                          >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
-    printf -- "          value: null\\n"                                     >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
     printf -- "        - parameter: --keep-contig-headers\\n"                >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
     printf -- "          value: null\\n"                                     >> ${sample_id}_${assembler}_${assembly_mode}_bakta_provenance.yml
 
@@ -38,7 +36,6 @@ process bakta {
         --tmp-dir ./tmp \
         --debug \
         --db ${params.bakta_db} \
-        --compliant \
         --keep-contig-headers \
         ${locustag} \
         --prefix "${sample_id}" \
