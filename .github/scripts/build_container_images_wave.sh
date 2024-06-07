@@ -10,7 +10,7 @@ for env_yaml in ../environments/*.yml; do
 	--conda-file ${env_yaml} \
 	--singularity \
 	--freeze \
-	--force --await \
+	--await \
 	--output ${image_name}.sif
 
     ls -lh ${image_name}.sif
