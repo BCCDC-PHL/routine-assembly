@@ -11,7 +11,10 @@ for env_yaml in ../environments/*.yml; do
 	--singularity \
 	--freeze \
 	--await \
-	--output json
+	--output json \
+	| python -m json.tool \
+		 | tee ${image_name}.json
+	echo "done building image ${image_name}"
 done
 
 
