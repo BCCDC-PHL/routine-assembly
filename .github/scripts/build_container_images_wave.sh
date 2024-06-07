@@ -11,9 +11,7 @@ for env_yaml in ../environments/*.yml; do
 	--singularity \
 	--freeze \
 	--await \
-	--output ${image_name}.sif
-
-    ls -lh ${image_name}.sif
+	--output json
 done
 
 
