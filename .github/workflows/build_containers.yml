@@ -11,11 +11,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - name: Install Apptainer
+      - name: Install Wave CLI
         run: |
-          .github/scripts/install_apptainer.sh
-      - name: Check Apptainer installation
-        run: apptainer --version
+          .github/scripts/install_wave-cli.sh
+      - name: Check wave installation
+        run: wave --version
       - name: Build images
         run: |
-          .github/scripts/build_container_images.sh
+          .github/scripts/build_container_images_wave.sh
