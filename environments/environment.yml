@@ -2,7 +2,6 @@ name: routine-assembly
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - python=3
   - perl-digest-sha=5.88
