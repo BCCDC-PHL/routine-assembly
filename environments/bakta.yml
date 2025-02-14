@@ -2,6 +2,5 @@ name: routine-assembly-bakta
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - bakta=1.9.3
