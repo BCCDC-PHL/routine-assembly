@@ -13,4 +13,4 @@ dependencies:
   - samtools=1.13
   - prokka=1.14.5
   - quast=5.0.2
-  - bandage=0.8.1
+  - bandage=0.9.0
