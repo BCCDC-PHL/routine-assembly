@@ -1,4 +1,4 @@
-name: Build & Push Container Images
+name: Build and Push Container Images
 
 on:
   push:
