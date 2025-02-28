@@ -33,7 +33,7 @@ def push_image(source_image_file, image_url):
 
 
 def main(args):
-    repo_owner = os.environ['GITHUB_REPOSITORY_OWNER']
+    repo_owner = os.environ['GITHUB_REPOSITORY_OWNER'].lower()
     
     wave_jsons = glob.glob(os.path.join(args.wave_jsons_dir, "*.json"))
     for wave_json in wave_jsons:
