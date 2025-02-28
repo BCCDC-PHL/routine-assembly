@@ -28,5 +28,5 @@ jobs:
           .github/scripts/build_container_images_wave.sh
       - name: Push images
         run: |
-	  echo ${GITHUB_TOKEN} | apptainer registry login -u ${GHCR_USERNAME} --password-stdin oras://ghcr.io
+          echo ${GITHUB_TOKEN} | apptainer registry login -u ${GHCR_USERNAME} --password-stdin oras://ghcr.io
           .github/scripts/push_container_images_wave.py --wave-jsons-dir wave_images --images-dir wave_images
