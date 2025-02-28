@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mkdir -p artifacts
+mkdir -p wave_images
 
 for env_yaml in environments/*.yml; do
     image_name=$(head -n 1 $env_yaml | cut -d ' ' -f 2)
@@ -12,9 +13,9 @@ for env_yaml in environments/*.yml; do
 	--await \
 	--output json \
 	| python -m json.tool \
-	| tee ${image_name}.json
+	| tee wave_images/${image_name}.json
     echo "done building image ${image_name}"
-    cp ${image_name}.json artifacts/
+    cp wave_images/${image_name}.json artifacts/
 
 done
 
