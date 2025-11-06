@@ -2,7 +2,7 @@ process fastp {
 
     tag { sample_id }
 
-    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_fastp.json", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_fastp.*", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads)
@@ -10,6 +10,7 @@ process fastp {
     output:
     tuple val(sample_id), path("${sample_id}_R1.trim.fastq.gz"), path("${sample_id}_R2.trim.fastq.gz"), emit: trimmed_reads
     tuple val(sample_id), path("${sample_id}_fastp.json"), emit: json
+    tuple val(sample_id), path("${sample_id}_fastp.html"), emit: html
     tuple val(sample_id), path("${sample_id}_fastp_provenance.yml"), emit: provenance
     
 
@@ -22,15 +23,26 @@ process fastp {
     printf -- "      parameters:\\n"                                              >> ${sample_id}_fastp_provenance.yml
     printf -- "        - parameter: --cut_tail\\n"                                >> ${sample_id}_fastp_provenance.yml
     printf -- "          value: null\\n"                                          >> ${sample_id}_fastp_provenance.yml
+    printf -- "        - parameter: --trim_poly_g\\n"                             >> ${sample_id}_fastp_provenance.yml
+    printf -- "          value: null\\n"                                          >> ${sample_id}_fastp_provenance.yml
+    printf -- "        - parameter: --overrepresentation_analysis\\n"             >> ${sample_id}_fastp_provenance.yml
+    printf -- "          value: null\\n"                                          >> ${sample_id}_fastp_provenance.yml
+    printf -- "        - parameter: --detect_adapter_for_pe\\n"                   >> ${sample_id}_fastp_provenance.yml
+    printf -- "          value: null\\n"                                          >> ${sample_id}_fastp_provenance.yml
 
     fastp \
 	-t ${task.cpus} \
 	-i ${reads[0]} \
 	-I ${reads[1]} \
 	--cut_tail \
+	--trim_poly_g \
+        --overrepresentation_analysis \
+        --detect_adapter_for_pe \
 	-o ${sample_id}_R1.trim.fastq.gz \
 	-O ${sample_id}_R2.trim.fastq.gz \
-	-j ${sample_id}_fastp.json
+	--report_title "fastp report: ${sample_id}" \
+	-j ${sample_id}_fastp.json \
+	--html ${sample_id}_fastp.html
     """
 }
 

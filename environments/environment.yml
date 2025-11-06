@@ -5,7 +5,7 @@ channels:
 dependencies:
   - python=3
   - perl-digest-sha=5.88
-  - fastp=0.23.1
+  - fastp=1.0.1
   - filtlong=0.2.1
   - nanoq=0.9.0
   - unicycler=0.4.8
