@@ -108,8 +108,12 @@ workflow {
 	bakta(unicycler.out.assembly)
     }
 
-    quast(unicycler.out.assembly)
-    checkm2(unicycler.out.assembly)
+    if (params.checkm2) {
+        checkm2(unicycler.out.assembly)
+    }
+
+    quast(unicycler.out.assembly)    
+
     bandage(unicycler.out.assembly_graph)
 
     parse_quast_report(quast.out.tsv)
@@ -142,8 +146,11 @@ workflow {
 	ch_provenance = ch_provenance.join(bakta.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
 
+    if (params.checkm2) {
+        ch_provenance = ch_provenance.join(checkm2.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    }
+
     ch_provenance = ch_provenance.join(quast.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
-    ch_provenance = ch_provenance.join(checkm2.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
 
     collect_provenance(ch_provenance)
 }
