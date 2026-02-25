@@ -9,7 +9,7 @@ Optionally annotate genes. Collects quality info on both incoming and outgoing d
 * Read trimming & QC: [fastp](https://github.com/OpenGene/fastp) and [filtlong](https://github.com/rrwick/Filtlong)
 * Genome Assembly: [unicycler](https://github.com/rrwick/Unicycler) (short reads, long reads, or hybrid)
 * Gene Annotation: [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta)
-* Assembly QC: [quast](https://github.com/ablab/quast), [bandage](https://github.com/rrwick/bandage)
+* Assembly QC: [quast](https://github.com/ablab/quast), [bandage](https://github.com/rrwick/bandage), [Checkm2](https://github.com/chklovski/CheckM2)
 
 ```mermaid
 flowchart TD
@@ -23,6 +23,7 @@ flowchart TD
   unicycler --> bakta(bakta)
   bakta --> bakta_genes["bakta_genes.gff"]
   unicycler --> quast(quast)
+  unicycler --> checkm2(checkm2)
   unicycler --> bandage(bandage)
   bandage --> bandage_diagram["bandage_diagram.png"]
   quast --> assembly_qc["assembly_qc.csv"]
