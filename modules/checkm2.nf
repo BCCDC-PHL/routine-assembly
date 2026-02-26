@@ -2,13 +2,13 @@ process checkm2 {
 
     tag { sample_id + ' / ' + assembly_mode }
 
-    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_${assembly_mode}_checkm2.tsv", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_${assembler}_${assembly_mode}_checkm2.csv", mode: 'copy'
 
     input:
     tuple val(sample_id), path(assembly), val(assembler), val(assembly_mode)
 
     output:
-    tuple val(sample_id), path("${sample_id}_${assembler}_${assembly_mode}_checkm2.tsv"), val(assembler), val(assembly_mode), emit: tsv
+    tuple val(sample_id), path("${sample_id}_${assembler}_${assembly_mode}_checkm2.csv"), val(assembler), val(assembly_mode), emit: csv
     tuple val(sample_id), path("${sample_id}_${assembler}_${assembly_mode}_checkm2_provenance.yml"),                          emit: provenance
 
     script:
@@ -30,6 +30,6 @@ process checkm2 {
 	--input ${assembly} \
 	--output-directory ${sample_id}_checkm2_output
 
-    mv ${sample_id}_checkm2_output/quality_report.tsv ${sample_id}_${assembler}_${assembly_mode}_checkm2.tsv
+    cat ${sample_id}_checkm2_output/quality_report.tsv | tr \$'\\t' ',' > ${sample_id}_${assembler}_${assembly_mode}_checkm2.csv
     """
 }
