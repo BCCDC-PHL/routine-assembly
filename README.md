@@ -9,7 +9,7 @@ Optionally annotate genes. Collects quality info on both incoming and outgoing d
 * Read trimming & QC: [fastp](https://github.com/OpenGene/fastp) and [filtlong](https://github.com/rrwick/Filtlong)
 * Genome Assembly: [unicycler](https://github.com/rrwick/Unicycler) (short reads, long reads, or hybrid)
 * Gene Annotation: [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta)
-* Assembly QC: [quast](https://github.com/ablab/quast), [bandage](https://github.com/rrwick/bandage)
+* Assembly QC: [quast](https://github.com/ablab/quast), [bandage](https://github.com/rrwick/bandage), [Checkm2](https://github.com/chklovski/CheckM2)
 
 ```mermaid
 flowchart TD
@@ -23,6 +23,8 @@ flowchart TD
   unicycler --> bakta(bakta)
   bakta --> bakta_genes["bakta_genes.gff"]
   unicycler --> quast(quast)
+  unicycler --> checkm2(checkm2)
+  checkm2 --> checkm2_qc["checkm2_qc.csv"]
   unicycler --> bandage(bandage)
   bandage --> bandage_diagram["bandage_diagram.png"]
   quast --> assembly_qc["assembly_qc.csv"]
@@ -88,6 +90,17 @@ ID,R1,R2
 sample-01,/path/to/sample-01_R1.fastq.gz,/path/to/sample-01_R2.fastq.gz
 sample-02,/path/to/sample-02_R1.fastq.gz,/path/to/sample-02_R2.fastq.gz
 sample-03,/path/to/sample-03_R1.fastq.gz,/path/to/sample-03_R2.fastq.gz
+```
+
+### Optional CheckM2 QC
+
+An additional [CheckM2](https://github.com/chklovski/CheckM2) assembly QC step can be added using the --checkm2 flag:
+
+```
+nextflow run BCCDC-PHL/routine-assembly \
+  --fastq_input <fastq input directory> \
+  --checkm2 \
+  --outdir <output directory>
 ```
 
 ### Hybrid Assembly Mode
@@ -168,7 +181,6 @@ sample-01
 ├── sample-01_unicycler_hybrid_prokka.gbk
 ├── sample-01_unicycler_hybrid_prokka.gff
 ├── sample-01_unicycler_hybrid_quast.csv
-├── sample-01_unicycler_hybrid_quast.csv
 ├── sample-01_unicycler_hybrid.fa
 ├── sample-01_unicycler_hybrid.gfa
 ├── sample-01_unicycler_hybrid.log
@@ -179,7 +191,6 @@ sample-01
 ├── sample-01_unicycler_short_bandage.png
 ├── sample-01_unicycler_short_prokka.gbk
 ├── sample-01_unicycler_short_prokka.gff
-├── sample-01_unicycler_short_quast.csv
 ├── sample-01_unicycler_short_quast.csv
 ├── sample-01_unicycler_short.fa
 ├── sample-01_unicycler_short.gfa

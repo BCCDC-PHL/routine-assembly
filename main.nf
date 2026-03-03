@@ -16,6 +16,7 @@ include { prokka }                     from './modules/prokka.nf'
 include { bakta }                      from './modules/bakta.nf'
 include { quast }                      from './modules/quast.nf'
 include { parse_quast_report }         from './modules/quast.nf'
+include { checkm2 }                    from './modules/checkm2.nf'
 include { bandage }                    from './modules/long_read_qc.nf'
 include { pipeline_provenance }        from './modules/provenance.nf'
 include { collect_provenance }         from './modules/provenance.nf'
@@ -107,7 +108,12 @@ workflow {
 	bakta(unicycler.out.assembly)
     }
 
-    quast(unicycler.out.assembly)
+    if (params.checkm2) {
+        checkm2(unicycler.out.assembly)
+    }
+
+    quast(unicycler.out.assembly)    
+
     bandage(unicycler.out.assembly_graph)
 
     parse_quast_report(quast.out.tsv)
@@ -138,6 +144,10 @@ workflow {
 
     if (params.bakta) {
 	ch_provenance = ch_provenance.join(bakta.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    }
+
+    if (params.checkm2) {
+        ch_provenance = ch_provenance.join(checkm2.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
 
     ch_provenance = ch_provenance.join(quast.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
