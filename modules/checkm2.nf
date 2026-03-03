@@ -26,9 +26,9 @@ process checkm2 {
 
     checkm2 predict \
         --threads ${task.cpus} \
-	--database_path ${params.checkm2_db} \
-	--input ${assembly} \
-	--output-directory ${sample_id}_checkm2_output
+        --database_path ${params.checkm2_db} \
+        --input ${assembly} \
+        --output-directory ${sample_id}_checkm2_output
 
     cat ${sample_id}_checkm2_output/quality_report.tsv | tr \$'\\t' ',' > ${sample_id}_${assembler}_${assembly_mode}_checkm2.csv
     """
