@@ -1,6 +1,7 @@
 process unicycler {
 
     tag { sample_id + ' / ' + assembly_mode }
+    errorStrategy 'ignore'
 
     publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_unicycler_${assembly_mode}.{fa,gfa,log}", mode: 'copy'
 
